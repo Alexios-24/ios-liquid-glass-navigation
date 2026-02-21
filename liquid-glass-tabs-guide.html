@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liquid Glass Bottom Navigation Guide</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
+    />
+    <style>
+      :root {
+        --bg: #0d0f13;
+        --surface: rgba(18, 21, 27, 0.94);
+        --surface-solid: #12151b;
+        --surface-soft: #171b23;
+        --text: #f3f6fb;
+        --text-muted: #9aa5b7;
+        --border: #2a313d;
+        --active: #343de5;
+        --inactive: #697694;
+        --shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(1000px 620px at 8% -5%, rgba(80, 100, 255, 0.18), transparent 58%),
+          radial-gradient(860px 540px at 100% 0%, rgba(0, 210, 165, 0.16), transparent 62%),
+          var(--bg);
+        color: var(--text);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        color-scheme: dark;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 100px 20px 64px;
+        display: grid;
+        gap: 40px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 32px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(6px);
+      }
+
+      .page > .card:first-child:not(.hero-section) {
+        background: linear-gradient(160deg, rgba(20, 25, 32, 0.96), rgba(17, 20, 26, 0.92));
+      }
+
+      .card.hero-section {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding-top: 10px;
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: clamp(28px, 6vh, 72px);
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0 0 10px;
+      }
+
+      h1 {
+        font-size: 36px;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-bottom: 14px;
+      }
+
+      h2 {
+        font-size: 22px;
+        letter-spacing: -0.015em;
+      }
+
+      h3 {
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .note {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .hero-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: #a1abb9;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .hero-badge {
+        background: #f4f7ff;
+        color: #0f1524;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 14px;
+      }
+
+      .chip {
+        font-size: 12px;
+        font-weight: 600;
+        color: #bbc4d3;
+        background: #1b2028;
+        border: 1px solid #2f3743;
+        border-radius: 999px;
+        padding: 7px 11px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .code-controls {
+        margin-bottom: 12px;
+      }
+
+      .capture-grid {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 14px;
+      }
+
+      .capture {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--surface-solid);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      }
+
+      .capture img {
+        width: 100%;
+        display: block;
+      }
+
+      .capture p {
+        margin: 0;
+        padding: 10px 12px;
+        font-size: 12px;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border);
+      }
+
+      .guide-video {
+        width: 100%;
+        display: block;
+        background: #000;
+        max-height: 760px;
+        object-fit: contain;
+      }
+
+      .hero-video {
+        margin-top: 72px;
+        border: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .capture-label {
+        margin: 0;
+        padding: 10px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #e8edf8;
+        background: #181d25;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .android-tab-frame {
+        position: relative;
+        aspect-ratio: 9 / 19.5;
+        background: #ffffff;
+        overflow: hidden;
+      }
+
+      .android-tab-frame img {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .capture-state {
+        position: relative;
+        aspect-ratio: 9 / 19.5;
+        background-image: url("gokollab_mobile_app/ios26-simulator-debug.png");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .capture-overlay {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(16px) saturate(150%);
+        -webkit-backdrop-filter: blur(16px) saturate(150%);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 6px 4px;
+        gap: 4px;
+      }
+
+      .capture-mini-tab {
+        text-align: center;
+        font-size: 10px;
+        color: #6a7387;
+      }
+
+      .capture-mini-tab .mini-icon {
+        display: block;
+        font-family: "Material Symbols Outlined";
+        font-size: 18px;
+        line-height: 1;
+        font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .capture-mini-tab.active {
+        color: var(--active);
+        font-weight: 700;
+      }
+
+      .capture-mini-tab.active .mini-icon {
+        font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      }
+
+      .capture-overlay.fallback-ios {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .capture-overlay.fallback-android {
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 10px 20px rgba(26, 34, 56, 0.2);
+      }
+
+      .control {
+        background: var(--surface-solid);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+
+      .control label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #c5cddd;
+      }
+
+      .control input[type="color"],
+      .control select {
+        border: 1px solid #36404f;
+        border-radius: 8px;
+        background: #12161d;
+        color: #e8edf8;
+      }
+
+      .control select {
+        padding: 7px 10px;
+      }
+
+      .download-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .download-btn {
+        appearance: none;
+        border: 1px solid #36414f;
+        background: #171c24;
+        color: #e9efff;
+        border-radius: 10px;
+        padding: 9px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .download-btn:hover {
+        border-color: #4e5c73;
+        background: #202733;
+      }
+
+      .preview-wrap {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 16px;
+        margin-top: 14px;
+      }
+
+      .phone {
+        width: 320px;
+        height: 650px;
+        border-radius: 36px;
+        border: 1px solid #dce2f0;
+        background:
+          radial-gradient(140px 140px at 18% 22%, rgba(113, 137, 255, 0.45), transparent 75%),
+          radial-gradient(190px 190px at 82% 36%, rgba(132, 229, 255, 0.48), transparent 73%),
+          radial-gradient(220px 180px at 48% 82%, rgba(167, 244, 214, 0.56), transparent 72%),
+          linear-gradient(180deg, #fefeff, #e8eeff);
+        box-shadow: 0 18px 60px rgba(25, 34, 54, 0.14);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        left: -30px;
+        right: -30px;
+        top: 120px;
+        height: 260px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.28),
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.24)
+        );
+        transform: rotate(-8deg);
+        z-index: 1;
+      }
+
+      .phone-header {
+        padding: 18px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .phone-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .phone-sub {
+        margin: 8px 0 0;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .mock-content {
+        margin: 0 16px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid #e9edf7;
+        background: rgba(255, 255, 255, 0.76);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        font-size: 12px;
+        color: #54607b;
+        position: relative;
+        z-index: 2;
+      }
+
+      .tabbar {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        z-index: 5;
+        overflow: hidden;
+      }
+
+      .tabbar::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.72),
+          rgba(255, 255, 255, 0.18)
+        );
+        pointer-events: none;
+      }
+
+      .tabbar-ios-native {
+        background: rgba(255, 255, 255, 0.38);
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 18px;
+        backdrop-filter: blur(18px) saturate(150%);
+        -webkit-backdrop-filter: blur(18px) saturate(150%);
+        padding: 8px 4px;
+      }
+
+      .tabbar-ios-fallback {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid #e8edf8;
+        border-radius: 16px;
+        padding: 8px 4px;
+      }
+
+      .tabbar-android {
+        background: rgba(255, 255, 255, 0.48);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 24px;
+        backdrop-filter: blur(18px) saturate(130%);
+        -webkit-backdrop-filter: blur(18px) saturate(130%);
+        box-shadow: 0 10px 26px rgba(22, 31, 52, 0.18);
+        padding: 8px 4px;
+      }
+
+      .scene-cards {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 84px;
+        display: grid;
+        gap: 8px;
+        z-index: 2;
+      }
+
+      .scene-card {
+        height: 54px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        box-shadow: 0 8px 18px rgba(33, 49, 87, 0.13);
+      }
+
+      .scene-card:nth-child(1) {
+        background: linear-gradient(125deg, #98aeff, #7ae3ff 58%, #b7f8da);
+      }
+
+      .scene-card:nth-child(2) {
+        background: linear-gradient(125deg, #ffcae0, #ffcfa8 55%, #ffe88b);
+      }
+
+      .scene-card:nth-child(3) {
+        background: linear-gradient(125deg, #a6f2e2, #9fd0ff 58%, #a89cff);
+      }
+
+      .tab {
+        border: 0;
+        background: transparent;
+        border-radius: 12px;
+        color: var(--inactive);
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: 2px;
+        min-height: 52px;
+        cursor: pointer;
+      }
+
+      .tab.active {
+        color: var(--active);
+      }
+
+      .tabbar-android .tab.active {
+        background: color-mix(in srgb, var(--active) 11%, transparent);
+      }
+
+      .icon {
+        font-family: "Material Symbols Outlined";
+        font-size: 24px;
+        line-height: 1;
+        font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+      }
+
+      .tab.active .icon {
+        font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      }
+
+      .label {
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .labels-off .label {
+        display: none;
+      }
+
+      .status-box {
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .status-item {
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .status-item b {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+
+      .status-item span {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .code-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      }
+
+      pre {
+        margin: 0;
+        border: 1px solid #2d3747;
+        border-radius: 14px;
+        background: #0f1319;
+        color: #dce7fb;
+        padding: 44px 14px 14px;
+        overflow: auto;
+        font-size: 12px;
+        line-height: 1.5;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        position: relative;
+      }
+
+      code {
+        font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      }
+
+      .copy-code-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: 1px solid #3a4557;
+        background: #1b222d;
+        color: #e5ecff;
+        border-radius: 8px;
+        padding: 5px 9px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .copy-code-btn:hover {
+        background: #262f3d;
+        border-color: #4c5b75;
+      }
+
+      @media (max-width: 860px) {
+        .preview-wrap {
+          grid-template-columns: 1fr;
+        }
+        .page {
+          padding: 34px 14px 40px;
+        }
+        .card {
+          padding: 16px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .card.hero-section {
+          margin-bottom: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="card hero-section">
+        <h1>Liquid Glass Bottom Navigation (Flutter + Native iOS)</h1>
+        <p class="note">
+          Use this guide as the implementation reference to ship native iOS 26+ liquid glass tabs in your Flutter app while preserving fallback tabs for iOS below 26 and Android.
+        </p>
+        <figure class="hero-video">
+          <video class="guide-video" autoplay loop muted playsinline preload="metadata">
+            <source src="assets/videos/ios26-liquid-glass-demo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </figure>
+      </section>
+
+      <section class="card">
+        <h2>State Screenshots</h2>
+        <p class="note">
+          Clean state-only view for sharing: iOS 26+ native liquid glass, iOS below 26 fallback, and Android Flutter fallback.
+          All examples use the same tab set and show a non-feed tab selected.
+        </p>
+
+        <div class="capture-grid">
+          <figure class="capture">
+            <div class="capture-label">iOS 26+ Native Liquid Glass</div>
+            <img src="assets/images/ios26-tabs-4-second.png" alt="iOS 26 plus native liquid glass tab bar with second tab selected" />
+          </figure>
+
+          <figure class="capture">
+            <div class="capture-label">iOS &lt; 26 Default iOS Tabs</div>
+            <div class="android-tab-frame">
+              <img
+                src="assets/images/android-tabs.png"
+                alt="iOS below 26 state using the exact provided Android tab screenshot at bottom"
+              />
+            </div>
+          </figure>
+
+          <figure class="capture">
+            <div class="capture-label">Android Tabs</div>
+            <div class="android-tab-frame">
+              <img
+                src="assets/images/android-tabs.png"
+                alt="Android Flutter tabs from real app shown at bottom"
+              />
+            </div>
+          </figure>
+        </div>
+
+      </section>
+
+      <section class="card">
+        <h2>State 1: iOS 26+ Native Liquid Glass</h2>
+        <p class="note">
+          Configure iOS 26+ subtypes here. Code below updates on selection.
+        </p>
+        <div class="controls code-controls">
+          <div class="control">
+            <label>
+              With Labels
+              <input id="codeShowLabels" type="checkbox" />
+            </label>
+          </div>
+          <div class="control">
+            <label>
+              Haptic on Select
+              <input id="codeHaptic" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="control">
+            <label>
+              Custom Selected Color
+              <input id="codeColor" type="color" value="#343DE5" />
+            </label>
+          </div>
+        </div>
+        <div class="code-grid">
+          <article>
+            <h3>Sample Code (iOS 26+)</h3>
+            <pre><code id="ios26SampleCode"></code></pre>
+          </article>
+          <article>
+            <h3>Project Reference Code (iOS 26+)</h3>
+            <pre><code id="ios26ProjectCode"></code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>State 2: iOS &lt; 26 + Android Default</h2>
+        <p class="note">
+          This state remains separate and stable. It keeps default Flutter tabs for older iOS and Android.
+        </p>
+        <div class="code-grid">
+          <article>
+            <h3>Sample Code (iOS &lt; 26 + Android)</h3>
+            <pre><code id="fallbackSampleCode"></code></pre>
+          </article>
+          <article>
+            <h3>Project Reference Code (iOS &lt; 26 + Android)</h3>
+            <pre><code id="fallbackProjectCode"></code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Download Tab Code Assets</h2>
+        <p class="note">
+          Download the current generated code blocks as files. iOS 26+ downloads reflect selected subtype options (labels, haptics, selected color).
+        </p>
+        <div class="download-actions">
+          <button class="download-btn" id="downloadIos26Sample">Download iOS 26+ Sample (.swift)</button>
+          <button class="download-btn" id="downloadIos26Project">Download iOS 26+ Project Reference (.txt)</button>
+          <button class="download-btn" id="downloadFallbackSample">Download iOS&lt;26+Android Sample (.dart)</button>
+          <button class="download-btn" id="downloadFallbackProject">Download iOS&lt;26+Android Project Reference (.dart)</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>If Your Project Does Not Have `AppDelegate.swift`</h2>
+        <p class="note">
+          Some Flutter projects start with Objective-C files (`AppDelegate.m/.h`) instead of Swift. You can either implement equivalent native tab setup in Objective-C, or migrate Runner host code to Swift and then use the Swift pattern shown above.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Copy-Paste Starter (New Flutter App)</h2>
+        <p class="note">
+          Use this section when starting from a fresh app. These are starter templates to speed up setup; replace tab screens/routes with your app pages.
+        </p>
+        <div class="code-grid">
+          <article>
+            <h3>`lib/main.dart` starter</h3>
+            <pre><code>const String iosHomeRoute = '/ios-tab/home';
+const String iosCommunitiesRoute = '/ios-tab/communities';
+const String iosCoursesRoute = '/ios-tab/courses';
+const String iosAccountRoute = '/ios-tab/account';
+
+class AppColors {
+  static const tabSelected = Color(0xFF343DE5);
+}
+
+MaterialApp(
+  initialRoute: PlatformDispatcher.instance.defaultRouteName,
+  onGenerateRoute: (settings) {
+    switch (settings.name) {
+      case iosHomeRoute:
+        return MaterialPageRoute(builder: (_) =&gt; const Scaffold(body: SafeArea(bottom: false, child: HomeScreen())));
+      case iosCommunitiesRoute:
+        return MaterialPageRoute(builder: (_) =&gt; const Scaffold(body: SafeArea(bottom: false, child: CommunitiesScreen())));
+      case iosCoursesRoute:
+        return MaterialPageRoute(builder: (_) =&gt; const Scaffold(body: SafeArea(bottom: false, child: CoursesScreen())));
+      case iosAccountRoute:
+        return MaterialPageRoute(builder: (_) =&gt; const Scaffold(body: SafeArea(bottom: false, child: AccountScreen())));
+      default:
+        return MaterialPageRoute(builder: (_) =&gt; const AdaptiveHomeShell());
+    }
+  },
+);
+
+// Keep this fallback for iOS &lt; 26 and Android
+// (CupertinoTabScaffold + NavigationBar)</code></pre>
+          </article>
+
+          <article>
+            <h3>`ios/Runner/AppDelegate.swift` starter (iOS 26+ native)</h3>
+            <pre><code>import Flutter
+import UIKit
+
+private struct NativeTabSpec {
+  let title: String
+  let imageName: String
+  let selectedImageName: String
+  let route: String
+}
+
+@main
+@objc class AppDelegate: FlutterAppDelegate, UITabBarControllerDelegate {
+  private let showLabelsOnIOS26 = false
+  private let enableHaptics = true
+  private let selectedColor = UIColor(red: 0x34/255.0, green: 0x3D/255.0, blue: 0xE5/255.0, alpha: 1.0)
+  private let feedback = UISelectionFeedbackGenerator()
+  private var lastIndex = 0
+
+  private let tabs: [NativeTabSpec] = [
+    .init(title: "Home", imageName: "house", selectedImageName: "house.fill", route: "/ios-tab/home"),
+    .init(title: "Groups", imageName: "person.2", selectedImageName: "person.2.fill", route: "/ios-tab/communities"),
+    .init(title: "Courses", imageName: "graduationcap", selectedImageName: "graduationcap.fill", route: "/ios-tab/courses"),
+    .init(title: "Account", imageName: "person.crop.circle", selectedImageName: "person.crop.circle.fill", route: "/ios-tab/account"),
+  ]
+
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    GeneratedPluginRegistrant.register(with: self)
+    let ok = super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+    if #available(iOS 26.0, *) {
+      let tc = UITabBarController()
+      tc.tabBar.tintColor = selectedColor
+      tc.tabBar.itemPositioning = .fill
+      // Build tab VCs with Flutter routes here.
+      window?.rootViewController = tc
+      window?.makeKeyAndVisible()
+    }
+    return ok
+  }
+}</code></pre>
+          </article>
+
+          <article>
+            <h3>Starter checklist</h3>
+            <pre><code>1) Add 4 native routes in main.dart.
+2) Keep fallback shell for iOS &lt; 26 and Android.
+3) Add iOS 26 availability gate in AppDelegate.swift.
+4) Wire 4 native tabs to the same routes.
+5) Verify:
+   - iOS 26+: native liquid glass
+   - iOS &lt; 26: default iOS tabs
+   - Android: Flutter tabs
+6) Optional subtype toggles:
+   - labels on/off
+   - haptic on/off
+   - selected color token</code></pre>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (() => {
+        const codeShowLabels = document.getElementById("codeShowLabels");
+        const codeHaptic = document.getElementById("codeHaptic");
+        const codeColor = document.getElementById("codeColor");
+        const ios26SampleTarget = document.getElementById("ios26SampleCode");
+        const ios26ProjectTarget = document.getElementById("ios26ProjectCode");
+        const fallbackSampleTarget = document.getElementById("fallbackSampleCode");
+        const fallbackProjectTarget = document.getElementById("fallbackProjectCode");
+        const downloadIos26SampleBtn = document.getElementById("downloadIos26Sample");
+        const downloadIos26ProjectBtn = document.getElementById("downloadIos26Project");
+        const downloadFallbackSampleBtn = document.getElementById("downloadFallbackSample");
+        const downloadFallbackProjectBtn = document.getElementById("downloadFallbackProject");
+
+        if (
+          !codeShowLabels ||
+          !codeHaptic ||
+          !codeColor ||
+          !ios26SampleTarget ||
+          !ios26ProjectTarget ||
+          !fallbackSampleTarget ||
+          !fallbackProjectTarget
+        ) {
+          return;
+        }
+
+        function toDartColor(hex) {
+          return `0xFF${hex.replace("#", "").toUpperCase()}`;
+        }
+
+        function toSwiftColorExpr(hex) {
+          const clean = hex.replace("#", "");
+          const r = parseInt(clean.slice(0, 2), 16);
+          const g = parseInt(clean.slice(2, 4), 16);
+          const b = parseInt(clean.slice(4, 6), 16);
+          return `UIColor(red: ${r} / 255.0, green: ${g} / 255.0, blue: ${b} / 255.0, alpha: 1.0)`;
+        }
+
+        function buildIos26SampleCode({ showLabels, hapticEnabled, colorHex }) {
+          const titleLine = showLabels ? "spec.title" : "nil";
+          const hapticLine = hapticEnabled
+            ? "feedback.selectionChanged()\n      feedback.prepare()"
+            : "// haptic disabled";
+          const swiftColor = toSwiftColorExpr(colorHex);
+          return `// iOS 26+ Native Liquid Glass (subtype-driven)
+// Subtype values:
+// - with labels: ${showLabels ? "ON" : "OFF"}
+// - haptic on selected: ${hapticEnabled ? "ON" : "OFF"}
+// - selected color: ${colorHex.toUpperCase()}
+
+private struct NativeTabSpec {
+  let title: String
+  let imageName: String
+  let selectedImageName: String
+  let route: String
+}
+
+private func tabItem(for spec: NativeTabSpec) -> UITabBarItem {
+  let item = UITabBarItem(
+    title: ${titleLine},
+    image: UIImage(systemName: spec.imageName),
+    selectedImage: UIImage(systemName: spec.selectedImageName)
+  )
+  item.accessibilityLabel = spec.title
+  return item
+}
+
+if #available(iOS 26.0, *) {
+  let tabController = UITabBarController()
+  tabController.tabBar.tintColor = ${swiftColor}
+  tabController.tabBar.itemPositioning = .fill
+}
+
+func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+  let selectedIndex = tabBarController.selectedIndex
+  guard selectedIndex != lastIndex else { return }
+  lastIndex = selectedIndex
+  ${hapticLine}
+}`;
+        }
+
+        function buildFallbackSampleCode() {
+          return `// iOS < 26 + Android default fallback tabs (same tab model)
+class AdaptiveHomeShell extends StatefulWidget {
+  const AdaptiveHomeShell({super.key});
+  @override
+  State<AdaptiveHomeShell> createState() => _AdaptiveHomeShellState();
+}
+
+class _AdaptiveHomeShellState extends State<AdaptiveHomeShell> {
+  int selectedIndex = 0;
+
+  void onTab(int index) {
+    if (index == selectedIndex) return;
+    HapticFeedback.selectionClick();
+    setState(() => selectedIndex = index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+    if (isIos) {
+      return CupertinoTabScaffold(
+        tabBar: CupertinoTabBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.groups_outlined), activeIcon: Icon(Icons.groups), label: 'Groups'),
+            BottomNavigationBarItem(icon: Icon(Icons.school_outlined), activeIcon: Icon(Icons.school), label: 'Courses'),
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined), activeIcon: Icon(Icons.account_circle), label: 'Account'),
+          ],
+          onTap: onTab,
+        ),
+        tabBuilder: (_, i) => pages[i],
+      );
+    }
+
+    return Scaffold(
+      body: pages[selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onTab,
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.groups_outlined), selectedIcon: Icon(Icons.groups), label: 'Groups'),
+          NavigationDestination(icon: Icon(Icons.school_outlined), selectedIcon: Icon(Icons.school), label: 'Courses'),
+          NavigationDestination(icon: Icon(Icons.account_circle_outlined), selectedIcon: Icon(Icons.account_circle), label: 'Account'),
+        ],
+      ),
+    );
+  }
+}`;
+        }
+
+        function buildIos26ProjectCode({ showLabels, hapticEnabled, colorHex }) {
+          const dartColor = toDartColor(colorHex);
+          const swiftColor = toSwiftColorExpr(colorHex);
+          const titleMode = showLabels ? "title: spec.title" : "title: nil";
+          const hapticLine = hapticEnabled
+            ? "nativeTabFeedbackGenerator.selectionChanged()\n  nativeTabFeedbackGenerator.prepare()"
+            : "// haptic disabled";
+          return `// Project reference (detailed): gokollab_mobile_app
+// File 1: lib/main.dart
+const String _iosNativeHomeRoute = '/ios-tab/home';
+const String _iosNativeCommunitiesRoute = '/ios-tab/communities';
+const String _iosNativeCoursesRoute = '/ios-tab/courses';
+const String _iosNativeAccountRoute = '/ios-tab/account';
+static const Color tabSelected = Color(${dartColor});
+
+MaterialApp(
+  initialRoute: PlatformDispatcher.instance.defaultRouteName,
+  onGenerateRoute: (settings) {
+    // map each native route to Scaffold + SafeArea wrapped content
+  },
+);
+
+// File 2: ios/Runner/AppDelegate.swift
+if #available(iOS 26.0, *) {
+  window?.rootViewController = makeNativeTabController()
+  window?.makeKeyAndVisible()
+}
+
+private func makeTabItem(spec: NativeTabSpec) -> UITabBarItem {
+  let item = UITabBarItem(
+    ${titleMode},
+    image: UIImage(systemName: spec.imageName),
+    selectedImage: UIImage(systemName: spec.selectedImageName)
+  )
+  item.accessibilityLabel = spec.title
+  return item
+}
+
+tabController.tabBar.tintColor = ${swiftColor}
+tabController.tabBar.itemPositioning = .fill
+
+func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+  let selectedIndex = tabBarController.selectedIndex
+  guard selectedIndex != lastNativeTabIndex else { return }
+  lastNativeTabIndex = selectedIndex
+  ${hapticLine}
+}`;
+        }
+
+        function buildFallbackProjectCode() {
+          return `// Project reference (detailed): iOS < 26 + Android default fallback
+// File: lib/main.dart
+class _AdaptiveHomeShellState extends State<AdaptiveHomeShell> {
+  int _selectedIndex = 0;
+  late final CupertinoTabController _cupertinoTabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _cupertinoTabController = CupertinoTabController(initialIndex: 0);
+  }
+
+  void _handleTabSelection(int index) {
+    if (index == _selectedIndex) return;
+    HapticFeedback.selectionClick();
+    setState(() => _selectedIndex = index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+    if (isIos) {
+      return CupertinoTabScaffold(
+        controller: _cupertinoTabController,
+        tabBar: CupertinoTabBar(
+          items: tabs,
+          onTap: _handleTabSelection,
+        ),
+        tabBuilder: (_, i) => tabPages[i],
+      );
+    }
+
+    return Scaffold(
+      body: IndexedStack(index: _selectedIndex, children: tabPages),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _handleTabSelection,
+        destinations: tabs,
+      ),
+    );
+  }
+}`;
+        }
+
+        function currentIos26Options() {
+          return {
+            showLabels: Boolean(codeShowLabels.checked),
+            hapticEnabled: Boolean(codeHaptic.checked),
+            colorHex: codeColor.value || "#343DE5",
+          };
+        }
+
+        function downloadTextFile(filename, content) {
+          const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = filename;
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+          URL.revokeObjectURL(url);
+        }
+
+        async function copyTextWithFallback(text) {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return;
+          }
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          document.execCommand("copy");
+          textarea.remove();
+        }
+
+        function setupCopyButtons() {
+          document.querySelectorAll("pre").forEach((pre) => {
+            if (pre.dataset.copyReady === "1") return;
+            pre.dataset.copyReady = "1";
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "copy-code-btn";
+            btn.textContent = "Copy";
+            btn.setAttribute("aria-label", "Copy code");
+
+            btn.addEventListener("click", async () => {
+              const code = pre.querySelector("code");
+              const text = code ? code.textContent : pre.textContent;
+              const original = btn.textContent;
+              try {
+                await copyTextWithFallback(text ?? "");
+                btn.textContent = "Copied";
+              } catch {
+                btn.textContent = "Failed";
+              }
+              setTimeout(() => {
+                btn.textContent = original;
+              }, 1200);
+            });
+
+            pre.appendChild(btn);
+          });
+        }
+
+        function renderCode() {
+          const showLabels = Boolean(codeShowLabels.checked);
+          const hapticEnabled = Boolean(codeHaptic.checked);
+          const colorHex = codeColor.value || "#343DE5";
+
+          ios26SampleTarget.textContent = buildIos26SampleCode({
+            showLabels,
+            hapticEnabled,
+            colorHex,
+          });
+          ios26ProjectTarget.textContent = buildIos26ProjectCode({
+            showLabels,
+            hapticEnabled,
+            colorHex,
+          });
+
+          fallbackSampleTarget.textContent = buildFallbackSampleCode();
+          fallbackProjectTarget.textContent = buildFallbackProjectCode();
+        }
+
+        [codeShowLabels, codeHaptic, codeColor].forEach((el) => {
+          if (!el) return;
+          el.addEventListener("change", renderCode);
+          el.addEventListener("input", renderCode);
+        });
+
+        downloadIos26SampleBtn?.addEventListener("click", () => {
+          downloadTextFile(
+            "ios26-native-liquid-glass-sample.swift",
+            buildIos26SampleCode(currentIos26Options())
+          );
+        });
+
+        downloadIos26ProjectBtn?.addEventListener("click", () => {
+          downloadTextFile(
+            "ios26-native-liquid-glass-project-reference.txt",
+            buildIos26ProjectCode(currentIos26Options())
+          );
+        });
+
+        downloadFallbackSampleBtn?.addEventListener("click", () => {
+          downloadTextFile(
+            "ios-below26-android-fallback-sample.dart",
+            buildFallbackSampleCode()
+          );
+        });
+
+        downloadFallbackProjectBtn?.addEventListener("click", () => {
+          downloadTextFile(
+            "ios-below26-android-fallback-project-reference.dart",
+            buildFallbackProjectCode()
+          );
+        });
+
+        renderCode();
+        setupCopyButtons();
+      })();
+    </script>
+  </body>
+</html>
