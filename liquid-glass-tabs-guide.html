@@ -601,6 +601,24 @@
         border-color: #4c5b75;
       }
 
+      .screen-credit {
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        z-index: 20;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(102, 115, 138, 0.45);
+        background: rgba(12, 16, 22, 0.75);
+        color: #b7c2d7;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: none;
+      }
+
       @media (max-width: 860px) {
         .preview-wrap {
           grid-template-columns: 1fr;
@@ -616,6 +634,12 @@
         }
         .card.hero-section {
           margin-bottom: 26px;
+        }
+        .screen-credit {
+          right: 10px;
+          bottom: 10px;
+          font-size: 11px;
+          padding: 5px 9px;
         }
       }
     </style>
@@ -849,6 +873,7 @@ private struct NativeTabSpec {
         </div>
       </section>
     </main>
+    <div class="screen-credit">Created by Pritesh</div>
 
     <script>
       (() => {
